@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drowsiness Detection</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Drowsiness Detection</h1>
+    <p class="subtitle">
+      Runs entirely in your browser — your camera feed never leaves your device.
+    </p>
+
+    <div id="banner" class="banner ok">Click "Start Camera" to begin</div>
+
+    <div class="video-wrap">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="overlay"></canvas>
+    </div>
+
+    <button id="startBtn">Start Camera</button>
+
+    <p class="ear-readout">EAR: <span id="ear-value">--</span></p>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
