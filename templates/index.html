@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drowsiness Detection</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Drowsiness Detection</h1>
+
+    <div id="banner" class="banner ok">Watching...</div>
+
+    <img id="video" src="{{ url_for('video_feed') }}" alt="Live camera feed">
+
+    <p class="ear-readout">EAR: <span id="ear-value">--</span></p>
+  </div>
+
+  <audio id="alert-sound" preload="auto">
+    <source src="{{ url_for('static', filename='alert.wav') }}" type="audio/wav">
+  </audio>
+
+  <script>
+    const banner = document.getElementById('banner');
+    const earValue = document.getElementById('ear-value');
+    const alertSound = document.getElementById('alert-sound');
+    let lastAlertPlayed = 0;
+
+    async function pollStatus() {
+      try {
+        const res = await fetch('/status');
+        const data = await res.json();
+
+        earValue.textContent = data.ear !== null ? data.ear.toFixed(2) : '--';
+
+        if (data.is_alert) {
+          banner.textContent = 'DROWSINESS ALERT!';
+          banner.className = 'banner alert';
+
+          const now = Date.now();
+          if (now - lastAlertPlayed > 3000) {
+            alertSound.currentTime = 0;
+            alertSound.play().catch(() => {});
+            lastAlertPlayed = now;
+          }
+        } else {
+          banner.textContent = data.status_text || 'Watching...';
+          banner.className = 'banner ok';
+        }
+      } catch (err) {
+        banner.textContent = 'Connection lost — is app.py still running?';
+        banner.className = 'banner alert';
+      }
+    }
+
+    setInterval(pollStatus, 500);
+    pollStatus();
+  </script>
+</body>
+</html>
